@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dashboard Admin - Cafe Jerami </title>
+<style>
+  body {
+    margin: 0; padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #f3e5d8;
+    color: #4e342e;
+  }
+  .container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+  }
+  header h1 {
+    color: #6d4c41;
+  }
+  button.logout {
+    background-color: #a1887f;
+    border: none;
+    padding: 10px 20px;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  button.logout:hover {
+    background-color: #8d6e63;
+  }
+  .nav-buttons {
+    display: flex;
+    gap: 20px;
+  }
+  .nav-buttons a {
+    background-color: #a1887f;
+    color: white;
+    padding: 25px 40px;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 1.2em;
+    text-align: center;
+    flex: 1;
+    transition: background-color 0.3s;
+  }
+  .nav-buttons a:hover {
+    background-color: #8d6e63;
+  }
+  footer {
+    text-align: center;
+    margin-top: 70px;
+    color: #a1887f;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Dashboard Admin</h1>
+    <button class="logout" id="logout-btn">Logout</button>
+  </header>
+
+  <div class="nav-buttons">
+    <a href="orders.html">Lihat Pesanan</a>
+  </div>
+
+  <footer>&copy; 2025 Cafe Jerami</footer>
+</div>
+
+<script>
+  // Pastikan hanya admin yang bisa akses halaman ini
+  if(localStorage.getItem('isAdminLoggedIn') !== 'true'){
+    window.location.href = 'login.html';
+  }
+
+  // Logout
+  document.getElementById('logout-btn').addEventListener('click', () => {
+    localStorage.removeItem('isAdminLoggedIn');
+    window.location.href = 'login.html';
+  });
+</script>
+</body>
+</html>

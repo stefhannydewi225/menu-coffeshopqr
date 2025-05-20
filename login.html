@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Login Admin - Cafe Jerami</title>
+<style>
+  body {
+    margin: 0; padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #f3e5d8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #4e342e;
+  }
+  .login-box {
+    background: #fff3e0;
+    padding: 30px 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #bcaaa4;
+    width: 320px;
+    text-align: center;
+  }
+  h2 {
+    margin-bottom: 25px;
+    color: #6d4c41;
+  }
+  input[type=text], input[type=password] {
+    width: 100%;
+    padding: 10px 12px;
+    margin: 10px 0 20px;
+    border: 1px solid #a1887f;
+    border-radius: 6px;
+    font-size: 16px;
+  }
+  button {
+    width: 100%;
+    padding: 12px;
+    background-color: #a1887f;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #8d6e63;
+  }
+  .error {
+    color: #d32f2f;
+    margin-bottom: 15px;
+  }
+</style>
+</head>
+<body>
+<div class="login-box">
+  <h2>Login Admin</h2>
+  <form id="login-form">
+    <input type="text" id="username" placeholder="Username" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <div class="error" id="error-msg"></div>
+    <button type="submit">Masuk</button>
+  </form>
+</div>
+
+<script>
+  // Data admin default
+  const adminUser = {
+    username: 'admin',
+    password: 'admin123'
+  };
+
+  const form = document.getElementById('login-form');
+  const errorMsg = document.getElementById('error-msg');
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const username = form.username.value.trim();
+    const password = form.password.value.trim();
+
+    if(username === adminUser.username && password === adminUser.password) {
+      // Simpan status login di localStorage
+      localStorage.setItem('isAdminLoggedIn', 'true');
+      // Redirect ke dashboard
+      window.location.href = 'dashboard.html';
+    } else {
+      errorMsg.textContent = 'Username atau password salah!';
+    }
+  });
+
+  // Jika sudah login, langsung redirect ke dashboard
+  if(localStorage.getItem('isAdminLoggedIn') === 'true') {
+    window.location.href = 'dashboard.html';
+  }
+</script>
+</body>
+</html>

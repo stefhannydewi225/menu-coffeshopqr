@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pesanan Masuk - Admin Cafe Jerami</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f3e5d8;
+      color: #4e342e;
+      padding: 30px 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #6d4c41;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      box-shadow: 0 0 10px #d7ccc8;
+      background: #fff8f0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      border: 1px solid #d7ccc8;
+      padding: 12px 15px;
+      text-align: left;
+      font-weight: 500;
+    }
+    th {
+      background-color: #d7ccc8;
+      color: #4e342e;
+    }
+    select.status-select {
+      padding: 6px;
+      border-radius: 5px;
+    }
+    button.delete-btn {
+      background-color: #d32f2f;
+      color: white;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button.delete-btn:hover {
+      background-color: #b71c1c;
+    }
+    footer {
+      margin-top: 50px;
+      text-align: center;
+      color: #a1887f;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Pesanan Masuk</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID Pesanan</th>
+      <th>Waktu</th>
+      <th>Nama</th>
+      <th>Meja</th>
+      <th>Item Pesanan</th>
+      <th>Total (Rp)</th>
+      <th>Status</th>
+      <th>Aksi</th>
+    </tr>
+  </thead>
+  <tbody id="orders-list">
+    <!-- Pesanan tampil di sini -->
+  </tbody>
+</table>
+
+<footer>&copy; 2025 Cafe Jerami</footer>
+
+<script>
+  if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
+    window.location.href = 'login.html';
+  }
+
+  const ordersList = document.getElementById('orders-list');
+
+  function formatDate(isoString) {
+    const date = new Date(isoString);
+    return date.toLocaleString('id-ID', {
+      day: '2-digit', month: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    });
+  }
+
+  function renderOrders() {
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    ordersList.innerHTML = '';
+
+    if (orders.length === 0) {
+      ordersList.innerHTML = '<tr><td colspan="8" style="text-align:center;">Tidak ada pesanan</td></tr>';
+      return;
+    }
+
+    orders.forEach(order => {
+      let itemsHTML = '<ul style="padding-left:18px; margin:0;">';
+      order.items.forEach(item => {
+        itemsHTML += `<li>${item.name} - Rp ${item.price.toLocaleString('id-ID')}</li>`;
+      });
+      itemsHTML += '</ul>';
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${order.id}</td>
+        <td>${formatDate(order.timestamp)}</td>
+        <td>${order.customerName || '-'}</td>
+        <td>${order.tableNumber || '-'}</td>
+        <td>${itemsHTML}</td>
+        <td>Rp ${order.total.toLocaleString('id-ID')}</td>
+        <td>
+          <select class="status-select" data-id="${order.id}">
+            <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Diproses</option>
+            <option value="completed" ${order.status === 'completed' ? 'selected' : ''}>Selesai</option>
+          </select>
+        </td>
+        <td><button class="delete-btn" data-id="${order.id}">Hapus</button></td>
+      `;
+      ordersList.appendChild(tr);
+    });
+  }
+
+  ordersList.addEventListener('change', e => {
+    const id = e.target.getAttribute('data-id');
+    if (e.target.classList.contains('status-select')) {
+      let orders = JSON.parse(localStorage.getItem('orders')) || [];
+      orders = orders.map(order => {
+        if (order.id === id) {
+          order.status = e.target.value;
+        }
+        return order;
+      });
+      localStorage.setItem('orders', JSON.stringify(orders));
+      renderOrders();
+    }
+  });
+
+  ordersList.addEventListener('click', e => {
+    const id = e.target.getAttribute('data-id');
+    if (e.target.classList.contains('delete-btn')) {
+      let orders = JSON.parse(localStorage.getItem('orders')) || [];
+      orders = orders.filter(order => order.id !== id);
+      localStorage.setItem('orders', JSON.stringify(orders));
+      renderOrders();
+    }
+  });
+
+  renderOrders();
+</script>
+
+</body>
+</html>
