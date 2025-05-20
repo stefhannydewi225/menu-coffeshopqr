@@ -1,0 +1,160 @@
+<!-- checkout.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Checkout - Cafe Jerami</title>
+<style>
+  body {
+    margin: 0; padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #f3e5d8;
+    color: #4e342e;
+  }
+  .container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 20px;
+  }
+  header h1 {
+    text-align: center;
+    color: #6d4c41;
+    margin-bottom: 30px;
+  }
+  label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+  }
+  input[type=text], input[type=number] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border: 1px solid #a1887f;
+    border-radius: 6px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px;
+  }
+  th, td {
+    padding: 10px;
+    border-bottom: 1px solid #d7ccc8;
+    text-align: left;
+  }
+  th {
+    background-color: #d7ccc8;
+  }
+  .total {
+    text-align: right;
+    font-weight: bold;
+    margin-top: 10px;
+    font-size: 1.2em;
+  }
+  .btn {
+    background-color: #a1887f;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 30px;
+    display: block;
+    width: 100%;
+    font-size: 1em;
+  }
+  .btn:hover {
+    background-color: #8d6e63;
+  }
+  .footer {
+    text-align: center;
+    color: #a1887f;
+    margin-top: 50px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Checkout Pesanan</h1>
+  </header>
+
+  <form id="checkout-form">
+    <label for="customer-name">Nama Pembeli:</label>
+    <input type="text" id="customer-name" name="customer-name" required />
+
+    <label for="table-number">Nomor Meja:</label>
+    <input type="number" id="table-number" name="table-number" required min="1" />
+
+    <h2>Ringkasan Pesanan</h2>
+    <table id="order-summary">
+      <thead>
+        <tr><th>Menu</th><th>Harga</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div class="total" id="total-price"></div>
+
+    <button type="submit" class="btn">Konfirmasi Pesanan</button>
+  </form>
+
+  <div class="footer">&copy; 2025 Cafe Jerami</div>
+</div>
+
+<script>
+  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const tbody = document.querySelector('#order-summary tbody');
+  const totalPriceEl = document.getElementById('total-price');
+
+  let total = 0;
+  if(cart.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="2">Keranjang kosong.</td></tr>';
+    totalPriceEl.textContent = '';
+  } else {
+    cart.forEach(item => {
+      const row = document.createElement('tr');
+      row.innerHTML = `<td>${item.name}</td><td>Rp ${item.price.toLocaleString()}</td>`;
+      tbody.appendChild(row);
+      total += item.price;
+    });
+    totalPriceEl.textContent = 'Total: Rp ' + total.toLocaleString();
+  }
+
+  document.getElementById('checkout-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    if(cart.length === 0){
+      alert('Keranjang kosong, tidak ada pesanan untuk diproses.');
+      return;
+    }
+    const name = this['customer-name'].value.trim();
+    const table = this['table-number'].value.trim();
+    if(!name || !table){
+      alert('Mohon isi nama dan nomor meja dengan benar.');
+      return;
+    }
+
+    // Buat data pesanan
+    const order = {
+      id: Date.now(), // id unik berdasarkan waktu
+      customerName: name,
+      tableNumber: table,
+      items: cart,
+      total: total,
+      timestamp: new Date().toISOString()
+    };
+
+    // Ambil data orders lama dari localStorage
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    orders.push(order);
+    localStorage.setItem('orders', JSON.stringify(orders));
+
+    alert(`Terima kasih, ${name}! Pesanan Anda untuk meja nomor ${table} sudah kami terima.\nTotal pembayaran: Rp ${total.toLocaleString()}`);
+
+    localStorage.removeItem('cart'); // bersihkan keranjang
+    window.location.href = 'index.html';
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keranjang Pesanan</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #f3e5d8;
+            color: #4e342e;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header h1 {
+            text-align: center;
+            color: #6d4c41;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #d7ccc8;
+            text-align: left;
+        }
+
+        th {
+            background-color: #d7ccc8;
+        }
+
+        .btn {
+            background-color: #a1887f;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #8d6e63;
+        }
+
+        .total {
+            font-weight: bold;
+            text-align: right;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            color: #a1887f;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Keranjang Pesanan Anda</h1>
+        </header>
+
+        <table id="cart-table">
+            <thead>
+                <tr>
+                    <th>Menu</th>
+                    <th>Harga</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <div class="total" id="total-price"></div>
+
+        <div style="text-align:center;">
+            <button class="btn" onclick="checkout()">Pesan Sekarang</button>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2025 Cafe Jerami</p>
+        </div>
+    </div>
+
+    <script>
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const tableBody = document.querySelector('#cart-table tbody');
+        const totalPriceEl = document.getElementById('total-price');
+
+        let total = 0;
+        cart.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${item.name}</td><td>Rp ${item.price.toLocaleString()}</td>`;
+            tableBody.appendChild(row);
+            total += item.price;
+        });
+
+        totalPriceEl.textContent = 'Total: Rp ' + total.toLocaleString();
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Keranjang Anda kosong.');
+                return;
+            }
+            window.location.href = 'checkout.html';
+        }
+    </script>
+</body>
+</html>
